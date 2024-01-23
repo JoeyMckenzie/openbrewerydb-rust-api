@@ -28,4 +28,10 @@ impl OpenBreweryClient {
     pub async fn get_brewery(&self, uuid: &str) -> OpenBreweryResult<Brewery> {
         self.send_request_and_deserialize::<Brewery>(uuid).await
     }
+
+    /// Retrieves one or more random breweries.
+    pub async fn get_random_brewery(&self, size: Option<u32>) -> OpenBreweryResult<Brewery> {
+        self.send_request_and_deserialize::<Brewery>(&format!("random?size={}", size.unwrap_or(1)))
+            .await
+    }
 }
