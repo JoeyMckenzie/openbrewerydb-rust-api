@@ -1,5 +1,5 @@
 mod single_brewery_tests {
-    use openbrewerydb_rust_api::client::OpenBreweryClient;
+    use openbrewerydb::client::OpenBreweryClient;
 
     #[tokio::test]
     async fn returns_ok_when_brewery_exists() {

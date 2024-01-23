@@ -3,7 +3,6 @@
 
 use std::time::Duration;
 
-use reqwest::header::HeaderMap;
 use serde::Deserialize;
 
 use crate::errors::OpenBreweryResult;
@@ -52,9 +51,8 @@ impl OpenBreweryClient {
 
     /// Sends a request with the required namespace and authentication token.
     async fn send_request(&self, url: &str) -> OpenBreweryResult<reqwest::Response> {
-        let mut headers = HeaderMap::new();
         let uri = format!("{API_BASE_URL}/{url}");
-        let response = self.http.get(uri).headers(headers).send().await?;
+        let response = self.http.get(uri).send().await?;
 
         Ok(response)
     }
