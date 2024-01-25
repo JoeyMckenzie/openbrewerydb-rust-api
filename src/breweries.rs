@@ -1,36 +1,56 @@
+//! Primary brewery client module, containing various models and endpoints for retrieving breweries.
+
 use serde::Deserialize;
 
 use crate::client::OpenBreweryClient;
 use crate::errors::OpenBreweryResult;
 
+/// Represents a brewery registered within the Open Brewery DB API dataset.
 #[derive(Default, Debug, Clone, PartialEq, Deserialize)]
 pub struct Brewery {
+    /// The generated UUID of the brewery.
     pub id: String,
+    /// The name of the brewery.
     pub name: String,
-    pub brewery_type: String,
-    pub address_1: String,
+    /// Type of the brewery, may not be included for all breweries.
+    pub brewery_type: Option<String>,
+    /// Primary address of the brewery, optional.
+    pub address_1: Option<String>,
+    /// Secondary address of the brewery, optional.
     pub address_2: Option<String>,
+    /// Additional address of the brewery, optional.
     pub address_3: Option<String>,
+    /// City the brewery is located in.
     pub city: String,
+    /// State the brewery is located in, primarily for non-U.S. breweries.
     pub state_province: String,
-    pub postal_code: String,
-    pub country: String,
-    pub longitude: String,
-    pub latitude: String,
-    pub phone: String,
-    pub website_url: String,
+    /// U.S. State the brewery is located in.
     pub state: String,
+    /// Zip code of the brewery.
+    pub postal_code: String,
+    /// Country the brewery is located in.
+    pub country: String,
+    /// Geographical longitude of the brewery, optional.
+    pub longitude: Option<String>,
+    /// Geographical latitude of the brewery, optional.
+    pub latitude: Option<String>,
+    /// Primary phone number of the brewery.
+    pub phone: String,
+    /// Website for the brewery.
+    pub website_url: Option<String>,
+    /// Street address of the brewery.
     pub street: String,
 }
 
 impl OpenBreweryClient {
     /// Retrieves a single brewery based on the UUID of the brewery.
-    pub async fn get_brewery(&self, uuid: &str) -> OpenBreweryResult<Brewery> {
-        self.send_request_and_deserialize::<Brewery>(uuid).await
+    pub async fn find(&self, uuid: &str) -> OpenBreweryResult<Option<Brewery>> {
+        self.send_request_and_optionally_deserialize::<Brewery>(uuid)
+            .await
     }
 
     /// Retrieves one or more random breweries.
-    pub async fn get_random_brewery(&self, size: Option<u32>) -> OpenBreweryResult<Brewery> {
+    pub async fn random(&self, size: Option<u32>) -> OpenBreweryResult<Brewery> {
         self.send_request_and_deserialize::<Brewery>(&format!("random?size={}", size.unwrap_or(1)))
             .await
     }

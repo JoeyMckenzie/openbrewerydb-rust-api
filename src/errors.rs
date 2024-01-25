@@ -1,5 +1,4 @@
-//! API errors that can occur during at any point
-//! during the request cycle to Open Brewery, mappings, builders, etc.
+//! API errors that can occur during at any point during the request cycle to Open Brewery, mappings, builders, etc.
 
 use thiserror::Error;
 
@@ -15,9 +14,6 @@ pub enum OpenBreweryError {
     /// Represents any reqwest that has failed, propagating the error context.
     #[error("{0}")]
     ClientRequestFailed(#[from] reqwest::Error),
-    /// Represents an error occurring when determining a typed locale based on the locale returned from Blizzard.
-    #[error("Locale {0} is unknown.")]
-    LocaleUnknown(String),
     /// Represents an error occurring when attempting construct queries.
     #[error("Query struct was not configured with any optional filters.")]
     SearchParametersNotProvided,

@@ -1,6 +1,6 @@
-//! A top-level client client for interacting with Blizzard Game Data APIs,
-//! including authentication and all publicly available APIs for Blizzard games.
+//! A top-level client for coordinating interactions with the Open Brewery DB API.
 
+use reqwest::StatusCode;
 use std::time::Duration;
 
 use serde::Deserialize;
@@ -18,8 +18,15 @@ const API_BASE_URL: &str = "https://api.openbrewerydb.org/v1/breweries";
 /// ```rust
 /// use std::time::Duration;
 ///
+/// use openbrewerydb::client::OpenBreweryClient;
+/// use openbrewerydb::errors::OpenBreweryResult;
+///
 /// #[tokio::main]
-/// async fn main() {
+/// async fn main() -> OpenBreweryResult<()> {
+/// let client = OpenBreweryClient::new();
+///     let brewery = client.find("b54b16e1-ac3b-4bff-a11f-f7ae9ddc27e0").await?;
+///     dbg!(brewery);
+///     Ok(())
 /// }
 #[derive(Debug)]
 pub struct OpenBreweryClient {
@@ -53,7 +60,6 @@ impl OpenBreweryClient {
     async fn send_request(&self, url: &str) -> OpenBreweryResult<reqwest::Response> {
         let uri = format!("{API_BASE_URL}/{url}");
         let response = self.http.get(uri).send().await?;
-
         Ok(response)
     }
 
@@ -64,5 +70,21 @@ impl OpenBreweryClient {
     ) -> OpenBreweryResult<T> {
         let response = self.send_request(url).await?.json::<T>().await?;
         Ok(response)
+    }
+
+    /// Sends a request with the required namespace and authentication token and deserializes the response.
+    pub(crate) async fn send_request_and_optionally_deserialize<T: for<'de> Deserialize<'de>>(
+        &self,
+        url: &str,
+    ) -> OpenBreweryResult<Option<T>> {
+        let response = self.send_request(url).await?;
+
+        if response.status() == StatusCode::NOT_FOUND {
+            return Ok(None);
+        }
+
+        let response = response.json::<T>().await?;
+
+        Ok(Some(response))
     }
 }

@@ -2,26 +2,26 @@ alias b := build
 
 default: lint
 
-# build main
+# build for release
 build:
     cargo build --release
 
-# build main
+# deploy to crates.io
 deploy: build
     cargo publish
 
-# run the dev server
+# continuously lint, watching for file changes
 lint:
     cargo watch -x clippy
 
-# run the dev server
+# continuously run tests, watch for file changes
 test:
     cargo watch -x test
 
-# check rust files format
+# check rust files format, emitting errors on formatting issues
 check:
     cargo fmt -v --check
 
 # format rust files
-format:
+fmt:
     cargo fmt -v

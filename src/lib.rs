@@ -12,6 +12,6 @@
     clippy::single_char_pattern
 )]
 
-mod breweries;
+pub mod breweries;
 pub mod client;
 pub mod errors;
