@@ -36,10 +36,10 @@ pub struct Brewery {
     pub latitude: Option<String>,
     /// Primary phone number of the brewery.
     pub phone: String,
-    /// Website for the brewery.
+    /// Website for the brewery, optional.
     pub website_url: Option<String>,
-    /// Street address of the brewery.
-    pub street: String,
+    /// Street address of the brewery, optional.
+    pub street: Option<String>,
 }
 
 impl OpenBreweryClient {
