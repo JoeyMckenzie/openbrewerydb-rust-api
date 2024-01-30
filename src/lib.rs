@@ -15,3 +15,4 @@
 pub mod breweries;
 pub mod client;
 pub mod errors;
+mod search;

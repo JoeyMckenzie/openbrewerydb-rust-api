@@ -4,6 +4,7 @@ use serde::Deserialize;
 
 use crate::client::OpenBreweryClient;
 use crate::errors::OpenBreweryResult;
+use crate::search::BreweryListQueryOptions;
 
 /// Represents a brewery registered within the Open Brewery DB API dataset.
 #[derive(Default, Debug, Clone, PartialEq, Deserialize)]
@@ -50,8 +51,16 @@ impl OpenBreweryClient {
     }
 
     /// Retrieves one or more random breweries.
-    pub async fn random(&self, size: Option<u32>) -> OpenBreweryResult<Brewery> {
-        self.send_request_and_deserialize::<Brewery>(&format!("random?size={}", size.unwrap_or(1)))
-            .await
+    pub async fn random(&self, size: Option<u32>) -> OpenBreweryResult<Vec<Brewery>> {
+        self.send_request_and_deserialize::<Vec<Brewery>>(&format!(
+            "random?size={}",
+            size.unwrap_or(1)
+        ))
+        .await
+    }
+
+    /// Retrieves a list of breweries optionally based on available filters.
+    pub async fn list(&self, filters: Option<BreweryListQueryOptions>) -> OpenBreweryResult<Vec<Brewery>> {
+        self.send_request_and_deserialize::<Vec<Brewery>>("").await
     }
 }
